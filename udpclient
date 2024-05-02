@@ -1,0 +1,30 @@
+#!/usr/bin/php
+<?php
+
+$options = getopt(null, ["host:", "port:", "message:"]);
+
+if (!isset($options["host"]) || !isset($options["port"]) || !isset($options["message"])) {
+    echo "Usage: ./client.php --host <host_address> --port <port_number> --message <message>\n";
+    exit(1);
+}
+
+$host = $options["host"];
+$port = intval($options["port"]);
+$message = $options["message"];
+
+// Sunucuya bağlan
+$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+if (!socket_sendto($socket, $message, strlen($message), 0, $host, $port)) {
+    echo "Error: Failed to send message to server.\n";
+    exit(1);
+}
+
+$response = '';
+$from = '';
+$port = 0;
+socket_recvfrom($socket, $response, 1024, 0, $from, $port);
+
+echo "Response from server $from:$port: $response\n";
+
+// Soketi kapat
+socket_close($socket);

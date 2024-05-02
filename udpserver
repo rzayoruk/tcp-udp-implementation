@@ -1,0 +1,39 @@
+#!/usr/bin/php
+
+<?php
+
+$host="127.0.0.1";
+$port=8080;
+
+
+$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+if (!$socket) {
+    echo "Error: UDP socket can not be created.\n";
+    exit(1);
+}
+
+// Soketi belirtilen IP adresine ve port numarasına bağla
+if (!socket_bind($socket, $host, $port)) {
+    echo "Error: Failed to bind UDP socket to $host:$port.\n";
+    exit(1);
+}
+echo "udp server ayakta.....";
+
+while (true) {
+    $data = '';
+    $from = '';
+    $port = 0;
+    
+    // Gelen veriyi al
+    socket_recvfrom($socket, $data, 1024, 0, $from, $port);
+    
+    echo "Received data from $from:$port: $data\n";
+
+    // İstemciye yanıt gönder
+    $response = "Server received your message: $data\n";
+    socket_sendto($socket, $response, strlen($response), 0, $from, $port);
+}
+
+socket_close($socket);
+
+    echo "\n";

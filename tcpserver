@@ -1,0 +1,44 @@
+#!/usr/bin/php
+
+<?php
+
+$host="127.0.0.1";
+$port=8080;
+
+
+$socket= stream_socket_server("tcp://$host:$port", $errno, $errstr) ;
+
+if(!$socket){
+    echo "Error: $errno $errstr";
+}else{
+
+    echo "Server is ready on --> $host:$port ...\n";
+    echo "Connection was accepted by TCP server...\n";
+
+   while($client=stream_socket_accept($socket)){
+    //echo $client."\n";
+
+    fwrite($client,"Tcp connection is established \n");
+
+    $data = fread($client,1024);
+
+    echo "Data is received as --> $data \n";
+
+    fwrite($client,"Data from client -> $data \n");
+
+    fclose($client);
+
+   }
+
+
+    echo "\n";
+}
+
+
+// echo "rıza\n";
+// echo $socket."\n";
+
+
+
+
+?>

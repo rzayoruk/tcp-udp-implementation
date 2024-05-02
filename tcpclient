@@ -1,0 +1,33 @@
+#!/usr/bin/php
+<?php
+
+
+//print_r($argv);
+
+//$args=getopt(null,["host:","port:",""]);
+
+$args=getopt(null,["host:","port:","message:"]);
+
+//print_r($args);
+
+if(isset($args["host"])&&isset($args["port"])&&isset($args["message"])){
+    $socket = fsockopen($args["host"], $args["port"], $errno, $errstr, 30);
+
+
+    if (!$socket) {
+        echo "$errstr ($errno)<br />\n";
+    } else {
+        fwrite($socket, $args["message"]);
+        while (!feof($socket)) {
+            echo fread($socket, 128);
+        }
+        fclose($socket);
+    }
+
+}else{
+    echo "Wrong command form \n The command form should be in this form : ./tcpclient --host localhost --port 8080 --message 'Hello from client'";
+}
+
+
+?>
+
